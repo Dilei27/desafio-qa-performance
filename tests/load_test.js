@@ -2,10 +2,8 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 import { Rate } from "k6/metrics";
 
-// Métrica global
 export const successRate = new Rate("success_rate");
 
-// Reporter HTML
 import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export function handleSummary(data) {
@@ -14,13 +12,11 @@ export function handleSummary(data) {
   };
 }
 
-// Utils
 function randomEmail() {
   const r = Math.random().toString(36).substring(7);
   return `user_${r}@test.com`;
 }
 
-// Configurações de cenários
 export const options = {
   scenarios: {
     public_load: {
@@ -64,7 +60,6 @@ export const options = {
   },
 };
 
-// Fluxo público
 export function publicFlow() {
   const res = http.get("https://test-api.k6.io/public/crocodiles/");
 
@@ -74,7 +69,6 @@ export function publicFlow() {
   sleep(0.2);
 }
 
-// Fluxo de registro + login
 export function authFlow() {
   const email = randomEmail();
 
@@ -100,7 +94,6 @@ export function authFlow() {
   sleep(0.5);
 }
 
-// Fluxo privado
 export function privateFlow() {
   const email = randomEmail();
 
