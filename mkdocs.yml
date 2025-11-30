@@ -1,0 +1,32 @@
+site_name: Performance - K6
+theme: 
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.suggestions
+    - toc.integrated
+  MarkdownExtensions:
+    - pymdownx.superfences:
+        custom_fences:
+          - name: mermaid
+            class: mermaid
+          
+
+nav:
+  - project-structure.md
+  - index.md
+  - setup.md  
+  - tests.md
+  - spike-test.md
+  - docker.md
+  - ci-cd.md
+  - results.md
+docs_dir: docs
