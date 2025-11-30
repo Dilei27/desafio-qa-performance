@@ -30,6 +30,7 @@ export const options = {
       duration: "1m",
       tags: { scenario: "public" },
     },
+
     auth_flow: {
       executor: "constant-vus",
       exec: "authFlow",
@@ -38,6 +39,7 @@ export const options = {
       startTime: "5s",
       tags: { scenario: "auth" },
     },
+
     private_flow: {
       executor: "constant-vus",
       exec: "privateFlow",
@@ -67,7 +69,6 @@ export function publicFlow() {
   const res = http.get("https://test-api.k6.io/public/crocodiles/");
 
   check(res, { "public OK": (r) => r.status === 200 });
-
   successRate.add(res.status === 200);
 
   sleep(0.2);
