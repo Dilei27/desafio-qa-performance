@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  k6:
+    build: .
+    container_name: k6-performance-test
+    volumes:
+      - .:/app
+    command: ["k6", "run", "tests/load_test.js"]
