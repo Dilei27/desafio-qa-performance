@@ -45,8 +45,6 @@ performance-blazedemo-k6/
 │── package.json
 │── README.md
 
-yaml
-Copiar código
 
 ---
 
