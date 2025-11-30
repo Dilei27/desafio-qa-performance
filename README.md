@@ -17,7 +17,7 @@ Validar se o sistema suporta:
 
 ## 🌐 Cenário Avaliado
 
-Fluxo de compra de passagem:
+Fluxo avaliado:
 
 **Home → Seleção de voo → Reserva → Compra → Confirmação**
 
@@ -33,11 +33,11 @@ A validação foi feita simulando:
 
 performance-blazedemo-k6/
 │── scripts/
-│ └── purchase-flow.js # fluxo completo de compra (opcional)
+│ └── purchase-flow.js # Fluxo completo de compra (opcional)
 │
 │── tests/
 │ ├── load_test.js # Teste de carga (250 VUs)
-│ └── spike_test.js # Teste de pico (Spike Test)
+│ └── spike_test.js # Teste de pico (spike)
 │
 │── reports/ # Relatórios HTML gerados automaticamente
 │── Dockerfile
@@ -45,6 +45,8 @@ performance-blazedemo-k6/
 │── package.json
 │── README.md
 
+yaml
+Copiar código
 
 ---
 
@@ -55,13 +57,14 @@ performance-blazedemo-k6/
 - K6 instalado
 
 ### ▶ Rodar teste de carga
+
 ```bash
 k6 run tests/load_test.js
 ▶ Gerar relatório HTML
 bash
 Copiar código
 npm run report
-Arquivo será salvo em:
+O relatório será salvo em:
 
 bash
 Copiar código
@@ -85,21 +88,21 @@ docker-compose up
 
 60 segundos
 
-Medição principal de throughput
+Tráfego público de leitura (principal carga)
 
 2️⃣ auth_flow
 5 VUs
 
 Registro + Login
 
-Avalia endpoints autenticados
+Testa endpoints autenticados
 
 3️⃣ private_flow
 10 VUs
 
-Acesso com token
+Fluxo autenticado com token
 
-Simula uso autenticado real
+Simula uso real pós-login
 
 🎯 Thresholds (Critérios de Aceitação)
 javascript
@@ -115,29 +118,27 @@ thresholds: {
   "http_req_duration{scenario:private}": ["p(90)<2000"],
 }
 📈 Resultado da Execução (Resumo Real)
-1119 req/s (muito acima das 250 req/s exigidas)
+1119 req/s (muito acima de 250 req/s)
 
-P90 ≈ 165 ms (bem abaixo dos 2s exigidos)
+P90 ≈ 165 ms (bem abaixo de 2s)
 
-Nenhuma queda de VUs
+Sem queda de VUs
 
-Estabilidade total
+Execução estável
 
 Todos thresholds atendidos
 
 ✔ Conclusão
-O sistema suporta com folga o tráfego solicitado no teste técnico.
+O sistema suporta com grande folga o tráfego solicitado no teste técnico.
 
 ℹ️ Observação sobre falhas 201/200
-Algumas validações de registro/login falham pois a API pública do K6 limita cadastros repetidos por IP.
+Algumas falhas são esperadas porque a API pública do K6 limita cadastros repetidos por IP.
 
-➡ Não impacta performance
-➡ Não interfere nos thresholds
-➡ Ambiente da API é limitado (comportamento esperado)
+➡ Não afeta performance
+➡ Não quebra thresholds
+➡ Não interfere no tráfego principal
 
 🧪 Teste de Pico (Spike Test)
-Utilizado para validar resiliência com aumento repentino de carga:
-
 javascript
 Copiar código
 export const options = {
@@ -148,6 +149,8 @@ export const options = {
     { duration: "5s", target: 0 },
   ]
 }
+Objetivo: validar estabilidade durante aumento repentino de carga.
+
 👨‍💻 Tecnologias Utilizadas
 K6 (JavaScript)
 
