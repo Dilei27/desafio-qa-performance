@@ -34,13 +34,13 @@ jobs:
         run: npm run report
 
       - name: 📤 Upload JSON Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: load-test-json
           path: report-load.json
 
       - name: 📤 Upload HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: load-test-html
           path: reports/summary.html
@@ -72,7 +72,7 @@ jobs:
         run: npm run report
 
       - name: 📤 Upload JSON Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: spike-test-json
           path: report-spike.json
