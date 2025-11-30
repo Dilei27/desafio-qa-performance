@@ -2,8 +2,10 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 import { Rate } from "k6/metrics";
 
+// Métrica global
 export const successRate = new Rate("success_rate");
 
+// Reporter HTML
 import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export function handleSummary(data) {
@@ -12,11 +14,13 @@ export function handleSummary(data) {
   };
 }
 
+// Utils
 function randomEmail() {
   const r = Math.random().toString(36).substring(7);
   return `user_${r}@test.com`;
 }
 
+// Configurações de cenários
 export const options = {
   scenarios: {
     public_load: {
@@ -26,23 +30,21 @@ export const options = {
       duration: "1m",
       tags: { scenario: "public" },
     },
-
     auth_flow: {
       executor: "constant-vus",
       exec: "authFlow",
       vus: 5,
       duration: "1m",
-      tags: { scenario: "auth" },
       startTime: "5s",
+      tags: { scenario: "auth" },
     },
-
     private_flow: {
       executor: "constant-vus",
       exec: "privateFlow",
       vus: 10,
       duration: "1m",
-      tags: { scenario: "private" },
       startTime: "10s",
+      tags: { scenario: "private" },
     },
   },
 
@@ -60,18 +62,18 @@ export const options = {
   },
 };
 
+// Fluxo público
 export function publicFlow() {
-  let res = http.get("https://test-api.k6.io/public/crocodiles/");
+  const res = http.get("https://test-api.k6.io/public/crocodiles/");
 
-  check(res, {
-    "public OK": (r) => r.status === 200,
-  });
+  check(res, { "public OK": (r) => r.status === 200 });
 
   successRate.add(res.status === 200);
 
   sleep(0.2);
 }
 
+// Fluxo de registro + login
 export function authFlow() {
   const email = randomEmail();
 
@@ -83,10 +85,7 @@ export function authFlow() {
     password: "123456",
   });
 
-  check(res, {
-    "register status 201": (r) => r.status === 201,
-  });
-
+  check(res, { "register status 201": (r) => r.status === 201 });
   successRate.add(res.status === 201);
 
   res = http.post("https://test-api.k6.io/auth/token/login/", {
@@ -94,19 +93,17 @@ export function authFlow() {
     password: "123456",
   });
 
-  check(res, {
-    "login OK": (r) => r.status === 200,
-  });
-
+  check(res, { "login OK": (r) => r.status === 200 });
   successRate.add(res.status === 200);
 
   sleep(0.5);
 }
 
+// Fluxo privado
 export function privateFlow() {
   const email = randomEmail();
 
-  let res = http.post("https://test-api.k6.io/user/register/", {
+  http.post("https://test-api.k6.io/user/register/", {
     username: email,
     first_name: "Load",
     last_name: "Test",
@@ -121,17 +118,12 @@ export function privateFlow() {
 
   const token = login.json("access");
 
-  res = http.get("https://test-api.k6.io/my/crocodiles/", {
+  const res = http.get("https://test-api.k6.io/my/crocodiles/", {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  check(res, {
-    "private OK": (r) => r.status === 200,
-  });
-
+  check(res, { "private OK": (r) => r.status === 200 });
   successRate.add(res.status === 200);
 
   sleep(0.5);
 }
-
-
