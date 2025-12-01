@@ -1,206 +1,176 @@
 # 🚀 Teste de Performance — BlazeDemo (K6)
 
-Este projeto implementa um cenário completo de performance utilizando K6 (JavaScript), com execução local, via Docker e CI/CD (GitHub Actions).
+Este projeto implementa um cenário completo de performance utilizando **K6 (JavaScript)**, com execução local, via **Docker** e em **CI/CD (GitHub Actions)**.
 
-Ele foi desenvolvido para atender ao teste técnico cujo objetivo é validar se o fluxo de compra de passagem no site BlazeDemo suporta:
-
-250 requisições por segundo
-
-P90 < 2 segundos
-
-O projeto segue práticas profissionais e arquitetura moderna.
-
-📌 Cenário do Teste Técnico
-Item	Descrição
-URL alvo	https://www.blazedemo.com
-
-Fluxo avaliado	Compra de passagem aérea (Home → Reserva → Compra → Confirmação)
-Critérios de Aceitação	250 req/s e tempo de resposta P90 inferior a 2s
-Ferramenta usada	K6 (JavaScript)
-🏗 Arquitetura do Projeto
-performance-blazedemo-k6/
-│── scripts/
-│   └── purchase-flow.js       # fluxo completo da compra (páginas)
-│
-│── tests/
-│   ├── load_test.js           # teste de carga (250 VUs)
-│   └── spike_test.js          # teste de pico (spike)
-│
-│── reports/                   # relatórios HTML (k6-reporter)
-│
-│── Dockerfile
-│── docker-compose.yml
-│── package.json
-│── README.md
+Link da Documentação :  https://Dilei27.github.io/desafio-qa-performance/
 
 
-Cada componente foi organizado para refletir um ambiente real de QA de performance.
+O objetivo é validar se o fluxo de compra do site **BlazeDemo** suporta:
 
-⚙️ Execução dos Testes
-🔵 1. Execução local
+- **250 requisições por segundo**
+- **P90 < 2 segundos**
 
-Pré-requisitos:
+---
 
-NodeJS 18+
+## 📌 Cenário do Teste Técnico
 
-k6 instalado
+Item | Descrição
+--- | ---
+URL alvo | https://www.blazedemo.com
+Fluxo avaliado | Compra de passagem aérea (Home → Reserva → Compra → Confirmação)
+Critérios | 250 req/s e P90 < 2s
+Ferramenta | K6 (JavaScript)
+
+---
+
+## 🏗 Arquitetura do Projeto
+
+performance-blazedemo-k6/  
+│── scripts/  
+│   └── purchase-flow.js        # fluxo completo da compra  
+│  
+│── tests/  
+│   ├── load_test.js            # teste de carga (250 VUs)  
+│   └── spike_test.js           # teste de pico  
+│  
+│── reports/                    # relatórios HTML (k6-reporter)  
+│  
+│── Dockerfile  
+│── docker-compose.yml  
+│── package.json  
+│── README.md  
+
+---
+
+## ⚙️ Execução dos Testes
+
+### 🔵 1. Execução local (Node + K6 instalado)
 
 Rodar o teste principal:
 
 k6 run tests/load_test.js
-▶ Gerar relatório HTML
-bash
-Copiar código
+
+Gerar relatório HTML:
+
 npm run report
 
-
-Arquivo gerado em:
+Arquivo gerado:
 
 reports/summary.html
 
-🐳 2. Execução via Docker
+---
+
+## 🐳 2. Execução via Docker
 
 Build:
 
 docker build -t k6-performance .
 
-
 Rodar:
 
 docker run k6-performance
 
-🐳 3. Via Docker Compose
+---
+
+## 🐳 3. Execução via Docker Compose
+
 docker compose up
 
-📊 Cenários Implementados (arquitetura profissional)
+---
 
-O desempenho real de um sistema não é medido com 1 fluxo.
-Este projeto implementa 3 cenários paralelos, simulando carga realista:
+## 📊 Cenários Implementados
 
-1️⃣ public_load
-250 VUs
+Este projeto implementa **3 cenários paralelos**, simulando carga realista:
 
-60 segundos
+### 1️⃣ public_load  
+- 250 VUs  
+- 60 segundos  
+- **P90 < 2s**  
+- **Critério principal do teste**
 
-☑ 250 VUs (alta carga de leitura pública)
-☑ Tempo de resposta P90 < 2s
-☑ Critério principal do teste
+### 2️⃣ auth_flow  
+- 5 VUs  
+- Fluxo: registro + login  
+- Representa carga autenticada moderada
 
-2️⃣ auth_flow
-5 VUs
+### 3️⃣ private_flow  
+- 10 VUs  
+- Consumo autenticado  
+- Simula fluxo interno realista
 
-Registro + Login
+---
 
-☑ 5 VUs
-☑ Registro + login
-☑ Representa carga autenticada moderada
-
-3️⃣ private_flow
-
-☑ 10 VUs
-☑ Consumo autenticado com token
-☑ Simula fluxo interno de usuário
-
-🎯 Thresholds Utilizados
-
-Estes thresholds garantem que o critério de aceitação seja realmente validado:
+## 🎯 Thresholds Utilizados
 
 "success_rate": ["rate>0.95"],
 
-"http_req_failed{scenario:public}": ["rate<0.01"],
-"http_req_duration{scenario:public}": ["p(90)<2000"],
+"http_req_failed{scenario:public}": ["rate<0.01"],  
+"http_req_duration{scenario:public}": ["p(90)<2000"],  
 
-"http_req_failed{scenario:auth}": ["rate<0.20"],
-"http_req_duration{scenario:auth}": ["p(95)<2500"],
+"http_req_failed{scenario:auth}": ["rate<0.20"],  
+"http_req_duration{scenario:auth}": ["p(95)<2500"],  
 
-"http_req_failed{scenario:private}": ["rate<0.05"],
-"http_req_duration{scenario:private}": ["p(90)<2000"],
+"http_req_failed{scenario:private}": ["rate<0.05"],  
+"http_req_duration{scenario:private}": ["p(90)<2000"],  
 
-📈 Resultado Final da Execução (Análise Profissional)
+---
 
-Após múltiplas execuções, os resultados foram:
+## 📈 Resultado Final da Execução (Análise Profissional)
 
-Métrica	Resultado	Critério	Status
-Requests/s	~1114 req/s	≥ 250 req/s	✔ Aprovado
-P90 (public)	~165 ms	< 2000 ms	✔ Aprovado
-Falhas	Baixíssimas / isoladas	Tolerância aplicada	✔ Aprovado
-VUs	250 simultâneos	Esperado	✔ Aprovado
-Estabilidade	Sem quedas	–	✔ Aprovado
-🧠 Interpretação Profissional
+Métrica | Resultado | Critério | Status
+--- | --- | --- | ---
+Requests/s | ~1114 req/s | ≥ 250 req/s | ✔ Aprovado
+P90 (public) | ~165 ms | < 2000 ms | ✔ Aprovado
+Falhas | Baixíssimas | Tolerância aplicada | ✔ Aprovado
+VUs | 250 | Esperado | ✔ Aprovado
+Estabilidade | Sem quedas | – | ✔ Aprovado
 
-O sistema suportou a carga com folga significativa.
+---
 
-Mesmo no pico de 250 VUs, o P90 ficou quase 15× melhor que o limite exigido.
+## 🧠 Interpretação Profissional
 
-Não houve saturação de CPU do servidor de testes do K6.
+- O sistema suportou a carga **com enorme folga**.  
+- O P90 ficou **~15× melhor** que o limite exigido.  
+- Fluxos autenticados apresentaram falhas esperadas (limitações da API pública), sem impacto no resultado.  
 
-Os fluxos autenticados tiveram falhas esperadas (explicação abaixo), mas sem impacto na performance.
+### ❗ Sobre erros 200/201 no fluxo de registro
 
-❗ Observação sobre falhas 200/201 no fluxo de registro/login
+A API demo do K6 limita criação de usuários por IP.  
+Isso causa respostas 200/201 inconsistentes.
 
-A API de testes do K6 (test-api.k6.io) possui limites de criação de usuários por IP.
+👉 **Não afeta o objetivo do teste.**
 
-Isso causa:
+---
 
-alguns 201 rejeitados
+## 🧪 Teste de Pico (Spike Test)
 
-alguns 200 inconsistentes
+stages:  
+- 5s → 10 VUs  
+- 5s → 250 VUs  
+- 10s → 250 VUs  
+- 5s → 0 VUs  
 
-👉 Isso NÃO afeta o objetivo do teste, pois:
+### Resultado:
+- Absorção imediata do spike  
+- Sem queda de VUs  
+- Sem aumento crítico de latência  
+- Sem filas internas  
 
-não impacta o tráfego público (principal)
+---
 
-não é uma limitação do BlazeDemo
+## ✔ Conclusão Final
 
-é um comportamento conhecido da API demo
+- **Sistema suporta o critério com folga**  
+- **P90 extremamente baixo** (~165 ms)  
+- **Arquitetura moderna e escalável**  
+- **Relatórios HTML completos na pasta /reports**
 
-🧪 Teste de Pico (Spike Test)
+---
 
-O spike foi implementado usando:
+## 👨‍💻 Tecnologias Utilizadas
 
-stages: [
-  { duration: "5s", target: 10 },
-  { duration: "5s", target: 250 },
-  { duration: "10s", target: 250 },
-  { duration: "5s", target: 0 },
-]
-
-
-Resultado:
-
-O sistema absorve o spike imediatamente
-
-Nenhum aumento crítico de latência
-
-Sem queda de VUs
-
-Sem filas internas
-
-✔ Conclusão Final
-✅ O sistema SUPORTA o critério de aceitação
-
-Com folga.
-
-🟢 P90 extremamente baixo
-
-~165 ms, muito abaixo de 2 segundos.
-
-🔥 Arquitetura de testes moderna e escalável
-
-Cenários paralelos, thresholds por cenário, relatórios HTML, execução Docker e CI/CD.
-
-📊 Resultado pronto para apresentação
-
-Relatório HTML completo dentro da pasta /reports.
-
-👨‍💻 Tecnologias Utilizadas
-
-K6 (JavaScript)
-
-Docker e Docker Compose
-
-GitHub Actions
-
-k6-reporter (HTML)
-
-Node 18
+- K6 (JavaScript)  
+- Docker / Docker Compose  
+- Node 18  
+- GitHub Actions  
+- k6-reporter (HTML)
